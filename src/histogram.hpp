@@ -1,7 +1,10 @@
 #pragma once
 
+#include "stats.hpp"
+
 #include <algorithm>
 #include <iostream>
+#include <string>
 #include <vector>
 
 
@@ -111,6 +114,13 @@ void print_histogram_by_binwidth(std::vector<double> data, double binwidth, int 
     double maxval = *std::max_element(data.begin(), data.end());
     double minval = *std::min_element(data.begin(), data.end());
 
+    double mean = stat::mean(data);
+    double stdv = stat::stddev(data);
+
+    //how many binwidths away from the mean is the standard deviation?
+    int stdv_in_bins = nearbyint(stdv/binwidth);
+    int mean_in_bins = int((mean - minval)/binwidth);
+
     int bins = (maxval - minval)/binwidth;
 
     double* histogram = new double[bins];
@@ -119,11 +129,18 @@ void print_histogram_by_binwidth(std::vector<double> data, double binwidth, int 
 
     double max_val = *std::max_element(histogram, histogram + bins);
 
+    std::string red = "\x1b[31;1m";
+	std::string def = "\x1b[0m";  //default
+
     for (int i = 0, j = resolution; i < resolution; i++, j--){
         std::cout << ' ';
         for (int k = 0; k < bins; k++){
             if ((histogram[k] * (resolution / max_val)) >= j){
-                std::cout << "# ";
+                if(abs(mean_in_bins - k) == stdv_in_bins){
+                    std::cout << red << "# " << def;
+                }else{
+                    std::cout << "# ";
+                }
             }
             else{
                 std::cout << "  ";
