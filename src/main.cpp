@@ -37,6 +37,8 @@ std::vector<double> rolldice(int dice, int trials){
 }
 
 int main(int argc, char const *argv[]) {
-    print_histogram_by_binwidth(rolldice(16, 1000000), 1, 20);
+    histogram test(rolldice(16, 1000000));
+    test.create_by_bins(60);
+    test.printg(20);
     return 0;
 }
