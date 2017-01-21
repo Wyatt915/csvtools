@@ -90,7 +90,7 @@ void histogram::create_by_bins(int n){
     proportional = new double[numbins];
 
     double binwidth = (maxval - minval)/double(numbins);
-    double temp = minval;
+    double temp = minval - (binwidth / 2); //ensure that minval gits placed in a bin
 
     for (size_t i = 0; i < numbins; i++) {
         bins[i].setl(temp);

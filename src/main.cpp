@@ -10,17 +10,6 @@
 #include <time.h>
 
 
-
-//more specifically, this type of normalization is called feature scaling
-std::vector<double> normalize(std::vector<double> in, double rmin, double rmax){
-    double maxval = *std::max_element(in.begin(), in.end());
-    double minval = *std::min_element(in.begin(), in.end());
-    for (size_t i = 0; i < in.size(); i++) {
-        in[i] = rmin + ((in[i] - minval) * (rmax - rmin))/(maxval - minval);
-    }
-    return in;
-}
-
 std::vector<double> rolldice(int dice, int trials){
     std::vector<double> v;
 
