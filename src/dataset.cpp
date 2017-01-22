@@ -13,23 +13,6 @@ dataset::dataset():
         data = new double[0];
 }
 
-dataset::dataset(double* d, unsigned int s):
-    iqr_b(false), max_b(false), mean_b(false), median_b(false),
-    min_b(false), stdev_b(false), variance_b(false), sorted(false), sz(s)
-{
-    data = new double[sz];
-    std::copy(d, d + s, data);
-}
-
-dataset::dataset(const std::vector<double>& v):
-    iqr_b(false), max_b(false), mean_b(false), median_b(false),
-    min_b(false), stdev_b(false), variance_b(false), sorted(false)
-{
-    sz = v.size();
-    data = new double[sz];
-    std::copy(std::begin(v), std::end(v), data);
-}
-
 dataset::~dataset(){
     delete[] data;
 }
@@ -105,6 +88,11 @@ double dataset::min(){
 
     min_b = true;
     return min_d;
+}
+
+double dataset::sigma(double n){
+    stdev();    //Make sure the standard deviation is defined.  This also implies that the mean is defined.
+    return mean_d + (n * stdev_d);
 }
 
 double dataset::stdev(){

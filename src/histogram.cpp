@@ -26,6 +26,10 @@ bool bin::contains(double val){
     return val > lower && val <= upper;
 }
 
+bool bin::contains(double a, double b){
+    return (a > lower && a <= upper) || (b > lower && b <= upper);
+}
+
 int bin::count(){
     return value;
 }
@@ -91,17 +95,13 @@ void histogram::create_by_bins(int n){
 }
 
 void histogram::printg(int resolution){
-
-    double negsigma = rawdata.mean() - rawdata.stdev();  //-1 standard deviation from the mean
-    double possigma = rawdata.mean() + rawdata.stdev();  //+1 standard deviation from the mean
-
     double max_prop_val = *std::max_element(proportional, proportional + numbins);
 
     for (int i = 0, j = resolution; i < resolution; i++, j--){
         std::cout << ' ';
         for (int k = 0; k < numbins; k++){
             if ((proportional[k] * (resolution / max_prop_val)) >= j){
-                if(bins[k].contains(negsigma) || bins[k].contains(possigma)){
+                if(bins[k].contains(rawdata.sigma(-1), rawdata.sigma(1))){
                     std::cout << TERMINAL_RED << "# " << TERMINAL_DEF;
                 }
                 else{

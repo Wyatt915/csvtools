@@ -12,6 +12,7 @@ public:
     bin();
     bin(double, double);
     bool contains(double);
+    bool contains(double, double);
     int count();
     void inc();
     void setl(double);
