@@ -45,38 +45,16 @@ void bin::setu(double u){
 
 ///////////////////////////////////////////////////////////////////////////////
 
-histogram::histogram():size(0), numbins(0){
-    proportional = new double[0];
-    rawdata = new double[0];
-    bins = new bin[0];
-}
-
-histogram::histogram(const std::vector<double>& v):numbins(0){
-    size = v.size();
-    rawdata = new double[size];
+histogram::histogram(dataset& ds, double mn, double mx, int b)
+    :numbins(b), minval(mn), maxval(mx), rawdata(ds){
+    size = rawdata.size();
     proportional = new double[numbins];
     bins = new bin[numbins];
-
-    maxval = *std::max_element(std::begin(v), std::end(v));
-    minval = *std::min_element(std::begin(v), std::end(v));
-
-    std::copy(std::begin(v), std::end(v), rawdata);
-}
-
-histogram::histogram(double* d, int s):size(s), numbins(0){
-    rawdata = new double[size];
-    proportional = new double[numbins];
-    bins = new bin[numbins];
-
-    maxval = *std::max_element(d, d + size);
-    minval = *std::min_element(d, d + size);
-
-    std::copy(d, d + size, rawdata);
+    create_by_bins(numbins);
 }
 
 histogram::~histogram(){
     delete[] bins;
-    delete[] rawdata;
     delete[] proportional;
 }
 
@@ -113,11 +91,9 @@ void histogram::create_by_bins(int n){
 }
 
 void histogram::printg(int resolution){
-    double mean = stat::mean(rawdata, size);
-    double stdv = stat::stddev(rawdata, mean, size);
 
-    double negsigma = mean - stdv;  //-1 standard deviation from the mean
-    double possigma = mean + stdv;  //+1 standard deviation from the mean
+    double negsigma = rawdata.mean() - rawdata.stdev();  //-1 standard deviation from the mean
+    double possigma = rawdata.mean() + rawdata.stdev();  //+1 standard deviation from the mean
 
     double max_prop_val = *std::max_element(proportional, proportional + numbins);
 

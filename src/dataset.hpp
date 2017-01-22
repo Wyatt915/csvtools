@@ -1,11 +1,13 @@
 #pragma once
 
+#include "dataset.hpp"
+
 #include <vector>
 
 class dataset {
 private:
     double* data;
-    unsigned int size;
+    unsigned int sz;
     bool sorted;
 
     double iqr_d, max_d, mean_d, median_d, min_d, stdev_d, variance_d;
@@ -25,6 +27,10 @@ public:
     double min();
     double stdev();
     double variance();
+
+    double& operator[](unsigned int);
+
+    unsigned int size();
 
     void normalize(double, double);
     void sort();

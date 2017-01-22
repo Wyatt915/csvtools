@@ -1,4 +1,5 @@
 //#include "strtk.h"
+#include "dataset.hpp"
 #include "histogram.hpp"
 
 #include <algorithm>
@@ -26,8 +27,11 @@ std::vector<double> rolldice(int dice, int trials){
 }
 
 int main(int argc, char const *argv[]) {
-    histogram test(rolldice(16, 1000000));
-    test.create_by_bins(60);
+    dataset diceTrials(rolldice(16, 1000000));
+    double minimum = diceTrials.mean() - 2*diceTrials.stdev();
+    double maximum = diceTrials.mean() + 2*diceTrials.stdev();
+    histogram test(diceTrials, minimum, maximum, 28);
+    std::cout << "Mean: " << diceTrials.mean() << std::endl;
     test.printg(20);
     return 0;
 }
