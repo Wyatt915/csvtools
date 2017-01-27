@@ -1,8 +1,6 @@
 #pragma once
+#include <algorithm>
 
-#include "dataset.hpp"
-
-#include <vector>
 
 class dataset {
 private:

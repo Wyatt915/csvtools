@@ -1,5 +1,4 @@
 #include "histogram.hpp"
-#include "stats.hpp"
 
 #include <algorithm>
 #include <iostream>

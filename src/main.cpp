@@ -1,10 +1,12 @@
 //#include "strtk.h"
 #include "dataset.hpp"
 #include "histogram.hpp"
+#include "exprtk.hpp"
 
 #include <algorithm>
 #include <getopt.h>
 #include <iostream>
+#include <string>
 #include <vector>
 
 #include <stdlib.h> //rand
@@ -37,11 +39,37 @@ void test() {
     test.printg(20);
 }
 
-int main(int argc, char const *argv[]) {
-    test();
-    return 0;
+void exprtest(){
+    typedef double T;
+    typedef exprtk::symbol_table<T> symbol_table_t;
+    typedef exprtk::expression<T>     expression_t;
+    typedef exprtk::parser<T>             parser_t;
+
+    std::string expression_string = "e^p - p";
+    T e = 2.718281828;
+    T p = 3.141592653;
+
+    symbol_table_t syms;
+    syms.add_variable("e", e);
+    syms.add_variable("p", p);
+
+    expression_t expression;
+    expression.register_symbol_table(syms);
+
+    parser_t parser;
+
+    if(!parser.compile(expression_string, expression)){
+        printf("Something's donked.\n");
+        return;
+    }
+
+    std::cout << "The expression (" << expression_string << ") evaluates to " << expression.value() << std::endl;
 }
 
+int main(int argc, char const *argv[]) {
+    exprtest();
+    return 0;
+}
 
 // int main(int argc, char* argv[]){
 //     static struct option long_options[] = {
@@ -102,17 +130,19 @@ int main(int argc, char const *argv[]) {
 //                 read(std::string(optarg), searchTerms);
 //                 break;
 //             case 't':
-//                 std::cout << "TODO: stuff" << std::endl;
+//                 test();
 //                 break;
 //             case ':':   /* missing option argument */
 //                 fprintf(stderr, "%s: option `-%c' requires an argument\n",
 //                 argv[0], optopt);
 //                 return 1;
 //             case '?':    /* invalid option */
-//             default:
 //                 fprintf(stderr, "%s: option `-%c' is invalid: ignored\n",
 //                 argv[0], optopt);
 //                 return 2;
+//             default:
+//                 std::cerr << "Invalid argument." << std::endl;
+//                 return 3;
 //         }
 //     }
 //     return 0;

@@ -1,5 +1,4 @@
 #include "dataset.hpp"
-#include <algorithm>
 #include <cassert>
 
 inline double sqr(double x){ return x*x; }
