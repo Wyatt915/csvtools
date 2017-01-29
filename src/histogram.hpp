@@ -17,6 +17,7 @@ public:
     void inc();
     void setl(double);
     void setu(double);
+    friend std::ostream& operator<<(std::ostream& os, const bin& b);
 };
 
 

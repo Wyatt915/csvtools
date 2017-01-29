@@ -1,15 +1,16 @@
 #include "dataset.hpp"
+#include "exprtk.hpp"
+
 #include <cassert>
 
 inline double sqr(double x){ return x*x; }
 
 //---------------------[Constructors]------------------------------------------
 
-dataset::dataset():
-    iqr_b(false), max_b(false), mean_b(false), median_b(false),
-    min_b(false), stdev_b(false), variance_b(false), sorted(false), sz(0)
+dataset::dataset():sz(0)
 {
-        data = new double[0];
+    set_all_false();
+    data = new double[0];
 }
 
 dataset::~dataset(){
@@ -106,20 +107,31 @@ double dataset::stdev(){
 
 double dataset::variance(){
     assert(sz > 0);
-
     if(variance_b){ return variance_d; }
-
     mean(); //make sure the mean is defined
     variance_d = 0.0;
-
     for(int i= 0; i < sz; i++){
         variance_d += sqr(mean_d - data[i]);
     }
-
     variance_d /= double(sz);
-
     variance_b = true;
     return variance_d;
+}
+
+//-------------------[Apply Modifications]--------------------------------------
+
+void dataset::set_all_false(){
+    iqr_b       = false;
+    max_b       = false;
+    mean_b      = false;
+    median_b    = false;
+    min_b       = false;
+    stdev_b     = false;
+    variance_b  = false;
+}
+
+void dataset::sort(){
+    std::sort(data, data + sz);
 }
 
 //more specifically, this type of normalization is called feature scaling
@@ -128,7 +140,36 @@ void dataset::normalize(double rmin, double rmax){
     for (int i = 0; i < sz; i++) {
         data[i] = rmin + ((data[i] - min_d) * (rmax - rmin))/(max_d - min_d);
     }
+    set_all_false(); //this changes EVERYTHING!
     min_d = rmin;
     max_d = rmax;
-    iqr_b = mean_b = median_b = stdev_b = variance_b = false; //this changes EVERYTHING!
+    max_b = min_b = true;
+}
+
+void dataset::apply_expression(std::string expression_string) {
+    typedef exprtk::symbol_table<double> symbol_table_t;
+    typedef exprtk::expression<double>     expression_t;
+    typedef exprtk::parser<double>             parser_t;
+
+    double x;
+
+    symbol_table_t syms;
+    syms.add_variable("x", x);
+
+    expression_t expression;
+    expression.register_symbol_table(syms);
+
+    parser_t parser;
+
+    if(!parser.compile(expression_string, expression)){
+        printf("Something's donked.\n");
+        return;
+    }
+
+    for (size_t i = 0; i < sz; i++) {
+        x = data[i];
+        data[i] = expression.value();
+    }
+
+    set_all_false(); //this changes EVERYTHING!
 }

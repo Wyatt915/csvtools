@@ -1,7 +1,7 @@
 CC = g++
 CFLAGS = -c -std=c++14
 
-SRCS = dataset.cpp histogram.cpp main.cpp
+SRCS = dataset.cpp fileops.cpp histogram.cpp main.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 

@@ -42,6 +42,10 @@
 #include <utility>
 #include <vector>
 
+//I AM NOT USING BOOST FOR THIS PROJECT
+#define strtk_no_tr1_or_boost
+#include <random>
+#include <regex>
 
 #ifndef strtk_no_tr1_or_boost
    #define strtk_enable_lexical_cast
@@ -64,6 +68,7 @@
    //#include <regex>
    #include <boost/regex.hpp>
 #endif
+
 
 
 namespace strtk

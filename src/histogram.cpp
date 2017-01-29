@@ -6,6 +6,8 @@
 #define TERMINAL_RED "\x1b[31;1m"
 #define TERMINAL_DEF "\x1b[0m"
 
+//---------------------------[bin member functions]-----------------------------
+
 bin::bin(): upper(0), lower(0), value(0){}
 
 bin::bin(double a, double b):value(0){
@@ -45,8 +47,12 @@ void bin::setu(double u){
     upper = u;
 }
 
+std::ostream& operator<<(std::ostream& os, const bin& b){
+    os << '(' << b.lower << ' ' << b.upper << ']';
+    return os;
+}
 
-///////////////////////////////////////////////////////////////////////////////
+//------------------------[Histogram member functions]--------------------------
 
 histogram::histogram(dataset& ds, double mn, double mx, int b)
     :numbins(b), minval(mn), maxval(mx), rawdata(ds){
@@ -70,7 +76,7 @@ void histogram::create_by_bins(int n){
     bins = new bin[numbins]();
     proportional = new double[numbins];
 
-    double binwidth = (maxval - minval)/double(numbins);
+    double binwidth = (maxval - minval)/double(numbins - 1);
     double temp = minval - (binwidth / 2); //ensure that minval gits placed in a bin
 
     for (size_t i = 0; i < numbins; i++) {
@@ -92,6 +98,8 @@ void histogram::create_by_bins(int n){
         proportional[i] = double(bins[i].count())/double(size);
     }
 }
+
+//------------------------------[Print functions]-------------------------------
 
 void histogram::printg(int resolution){
     double max_prop_val = *std::max_element(proportional, proportional + numbins);
@@ -118,4 +126,10 @@ void histogram::printg(int resolution){
 
     }
     std::cout << '\n';
+}
+
+void histogram::print(){
+    for(int i = 0; i < numbins; i++){
+        std::cout << bins[i] << ',' << bins[i].count() << std::endl;
+    }
 }
