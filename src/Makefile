@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -c -std=c++14
+CFLAGS = -c -g -std=c++14
 
 SRCS = dataset.cpp fileops.cpp histogram.cpp main.cpp
 

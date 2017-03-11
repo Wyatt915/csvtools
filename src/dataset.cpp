@@ -2,10 +2,11 @@
 #include "exprtk.hpp"
 
 #include <cassert>
+#include <iostream>
 
 inline double sqr(double x){ return x*x; }
 
-//---------------------[Constructors]------------------------------------------
+//------------------------[Constructors / Destructors]--------------------------
 
 dataset::dataset():sz(0)
 {
@@ -17,18 +18,32 @@ dataset::~dataset(){
     delete[] data;
 }
 
-// -----------------------[Overloads]-------------------------------------------
+//---------------------------------[Overloads]----------------------------------
 
 double& dataset::operator[](unsigned int idx){
     assert(idx<sz);
     return data[idx];
 }
 
-//----------------["Get-ish" member functions]---------------------------------
+//------------------------["Get-ish" member functions]--------------------------
 
 unsigned int dataset::size(){ return sz; }
 
-double dataset::iqr(){ return 0.0; }
+double dataset::iqr(){
+    assert(sz > 0);
+    if(iqr_b){ return iqr_d; }
+
+    int medpos;
+
+    double q1, q3;
+
+    if(sorted){
+        median_d =  (sz % 2 == 0) ? (data[sz/2] + data[sz/2 - 1])/2.0 : data[sz/2];
+        median_b = true;
+
+
+    }
+}
 
 double dataset::max(){
     assert(sz > 0);
@@ -118,7 +133,7 @@ double dataset::variance(){
     return variance_d;
 }
 
-//-------------------[Apply Modifications]--------------------------------------
+//----------------------------[Apply Modifications]-----------------------------
 
 void dataset::set_all_false(){
     iqr_b       = false;
@@ -135,7 +150,7 @@ void dataset::sort(){
 }
 
 //more specifically, this type of normalization is called feature scaling
-void dataset::normalize(double rmin, double rmax){
+void dataset::scale(double rmin, double rmax){
     min(); max(); //make sure these are defined
     for (int i = 0; i < sz; i++) {
         data[i] = rmin + ((data[i] - min_d) * (rmax - rmin))/(max_d - min_d);
@@ -162,7 +177,7 @@ void dataset::apply_expression(std::string expression_string) {
     parser_t parser;
 
     if(!parser.compile(expression_string, expression)){
-        printf("Something's donked.\n");
+        std::cerr << "Malformed expression." << std::endl;
         return;
     }
 

@@ -4,12 +4,15 @@
 * @Email:  wyatt@pixil.xyz
 * @Filename: fileops.hpp
 * @Last modified by:   wyatt
-* @Last modified time: 2017-01-29T13:32:38-06:00
+* @Last modified time: 2017-03-01T20:52:57-06:00
 */
 #pragma once
 #include <string>
+#include <vector>
 
 class dataset;
 
-void get_column(std::string, int, dataset&);
+void split(std::string, std::string, std::vector<std::string>&);
+std::vector<std::vector<std::string> > get_column(int, dataset&);
+std::vector<std::vector<std::string> > get_column(std::string, int, dataset&);
 //void overwrite_column(std::string, int, const dataset&);

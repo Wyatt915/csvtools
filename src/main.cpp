@@ -4,7 +4,7 @@
 * @Email:  wyatt@pixil.xyz
 * @Filename: main.cpp
 * @Last modified by:   wyatt
-* @Last modified time: 2017-01-29T13:47:36-06:00
+* @Last modified time: 2017-03-01T22:03:12-06:00
 */
 
 
@@ -66,7 +66,7 @@ int main(int argc, char* argv[]){
         {"help",            no_argument,        0, 'h'},
         {"input-file",      required_argument,  0, 'i'},
         {"output-file",     required_argument,  0, 'o'},
-        {"range",           required_argument,  0, 'r'},
+        {"scale",           required_argument,  0, 's'},
         {"test",            optional_argument,  0, 't'},
         {0, 0, 0, 0}
     };
@@ -75,15 +75,19 @@ int main(int argc, char* argv[]){
     bool outputFileFlag =   false; //set to true if the -o option is encountered.
     bool inputFileFlag =    false;
     bool expressionFlag =   false;
+    bool scaleFlag =        false;
 
-    int column = 0; //column which will be operated on
+    unsigned int column = 0; //column which will be operated on
     std::string delimeters;
     std::string outputFileName;
     std::string inputFileName;
     std::string range;
     std::string expression;
+    std::string scaleString;
 
-    while ( (c = getopt_long(argc, argv, "c:d:hi:o:s:t", long_options, NULL)) != -1 ) {
+    dataset columnData;
+
+    while ( (c = getopt_long(argc, argv, "c:d:e:hi:o:s:t", long_options, NULL)) != -1 ) {
         int this_option_optind = optind ? optind : 1;
         switch (c) {
             case 'c':
@@ -104,9 +108,12 @@ int main(int argc, char* argv[]){
                 inputFileName = std::string(optarg);
                 break;
             case 'o':
-            outputFileFlag = true;
+                outputFileFlag = true;
                 outputFileName = std::string(optarg);
                 break;
+            case 's':
+                scaleFlag = true;
+                scaleString = std::string(optarg);
             case 't':
                 test();
                 break;
@@ -124,17 +131,39 @@ int main(int argc, char* argv[]){
         }
     }
 
-    dataset columnData;
+//------------------------[get a column from the input]-------------------------
 
-    if(inputFileFlag){
-        get_column(inputFileName, column, columnData);
-        histogram h(columnData, 1, 10, 10);
-        h.print();
-        std::cout << std::endl;
-        h.printg(10);
+    std::vector<std::vector<std::string> > csv;
+
+    if(inputFileFlag){ csv = get_column(inputFileName, column, columnData); }
+    else{ csv = get_column(column, columnData); }
+
+//---------------------------[apply any expressions]----------------------------
+
+    if(expressionFlag){ columnData.apply_expression(expression); }
+
+//---------------------[perform scaling after expressions]----------------------
+
+    if(scaleFlag){
+        std::vector<std::string> v;
+        split(scaleString, ",", v);
+        double l = std::stod(v[0].substr(1,v[0].length()));
+        double u = std::stod(v[1].substr(0,v[1].length() - 1));
+        columnData.scale(l, u);
     }
 
-
-
+//----------------------------------[Output]------------------------------------
+    if(!outputFileFlag){
+        size_t rowlen;
+        for(size_t i = 0; i < csv.size(); i++){
+            rowlen = csv[i].size();
+            for (size_t j = 0; j < rowlen; j++) {
+                if(j == column){ std::cout << columnData[i]; }
+                else{ std::cout << csv[i][j]; }
+                if(j < rowlen - 1){ std::cout << ","; }
+            }
+            std::cout << std::endl;
+        }
+    }
     return 0;
 }

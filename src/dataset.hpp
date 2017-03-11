@@ -34,7 +34,7 @@ public:
     unsigned int size();
 
     void set_all_false();
-    void normalize(double, double);
+    void scale(double, double);
     void sort();
     void apply_expression(std::string);
 };

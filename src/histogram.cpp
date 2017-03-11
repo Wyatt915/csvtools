@@ -1,3 +1,4 @@
+#include "dataset.hpp"
 #include "histogram.hpp"
 
 #include <algorithm>
@@ -85,8 +86,8 @@ void histogram::create_by_bins(int n){
         bins[i].setu(temp);
     }
 
-    for(int i = 0; i < size; i++){
-        for(int j = 0; j < numbins; j++){
+    for(size_t i = 0; i < size; i++){
+        for(size_t j = 0; j < numbins; j++){
             if(bins[j].contains(rawdata[i])){
                 bins[j].inc();
                 break;
@@ -94,7 +95,7 @@ void histogram::create_by_bins(int n){
         }
     }
 
-    for(int i = 0; i < numbins; i++){
+    for(size_t i = 0; i < numbins; i++){
         proportional[i] = double(bins[i].count())/double(size);
     }
 }
@@ -106,7 +107,7 @@ void histogram::printg(int resolution){
 
     for (int i = 0, j = resolution; i < resolution; i++, j--){
         std::cout << ' ';
-        for (int k = 0; k < numbins; k++){
+        for (size_t k = 0; k < numbins; k++){
             if ((proportional[k] * (resolution / max_prop_val)) >= j){
                 if(bins[k].contains(rawdata.sigma(-1), rawdata.sigma(1))){
                     std::cout << TERMINAL_RED << "# " << TERMINAL_DEF;
@@ -129,7 +130,7 @@ void histogram::printg(int resolution){
 }
 
 void histogram::print(){
-    for(int i = 0; i < numbins; i++){
+    for(size_t i = 0; i < numbins; i++){
         std::cout << bins[i] << ',' << bins[i].count() << std::endl;
     }
 }

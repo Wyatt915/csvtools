@@ -1,7 +1,6 @@
 #pragma once
 
-#include <vector>
-#include "dataset.hpp"
+#include <iostream>
 
 class bin{
 private:
@@ -20,11 +19,12 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const bin& b);
 };
 
+class dataset;
 
 class histogram {
 private:
-    int size;
-    int numbins;
+    unsigned int size;
+    unsigned int numbins;
 
     double maxval;
     double minval;
